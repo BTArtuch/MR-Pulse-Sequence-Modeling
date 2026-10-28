@@ -3,3 +3,5 @@ git_token.txt
 output/
 data/
 venv/
+
+__pycache__/
