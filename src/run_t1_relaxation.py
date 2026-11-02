@@ -1,4 +1,9 @@
-from include.t1_relaxation_math import continuous_t1_decay_plot
+from include.t1_relaxation_math import continuous_t1_decay_plot, t1_multi_plot
 
 if __name__ == "__main__":
-    continuous_t1_decay_plot(0.4,2)
+    t1 = 0.4 # (seconds)
+    t = 6.0 # (seconds)
+    # continuous_t1_decay_plot(t1,t)
+
+    t1_list = [0.4, 1.4, 3.2] # [fat, muscle, CSF (Cerebrospinal Fluid)]
+    t1_multi_plot(t1_list, t)

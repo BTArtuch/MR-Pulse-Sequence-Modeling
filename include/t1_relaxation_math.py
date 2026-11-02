@@ -17,7 +17,7 @@ def discrete_t1_decay(T1, t):
 
 def continuous_t1_decay_plot(T1, t):
     '''
-        Continuous visulaization of the T1 (s) decay for a single tissue over
+        Continuous visualization of the T1 (s) decay for a single tissue over
          time t (s) (90 degree pulse)
     '''
     t = np.linspace(0.0,float(t), 201)
@@ -28,6 +28,31 @@ def continuous_t1_decay_plot(T1, t):
     ax.plot(t, Mz_t)
 
     output_path = OUTPUT_DIR / "t1_fat_relaxation.png"
+    fig.savefig(output_path, dpi=300, bbox_inches="tight")
+    plt.close(fig)
+
+    print(f"Saved figure to: {output_path}")
+
+def t1_multi_plot(T1_list, t):
+    '''
+        Continuous visualization of the T1 (s) decays for a list of multiple tissues over
+         time t (s) (90 degree pulse)
+    '''
+    t = np.linspace(0.0,float(t), 201)
+    M0 = 1.0 # Just normalize the magnetization vector for demonstration
+    
+    Mz_list = []
+
+    for T1_value in T1_list:
+        Mz_t = M0 * (1.0 - np.exp(-t/T1_value)) # 90 degree B1 pulse decay
+        Mz_list.append(Mz_t)
+
+    fig, ax = plt.subplots()
+
+    for i in range(0,len(Mz_list)):
+        ax.plot(t, Mz_list[i])
+
+    output_path = OUTPUT_DIR / "t1_multi_relaxation.png"
     fig.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
 
