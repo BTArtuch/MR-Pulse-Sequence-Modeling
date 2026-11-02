@@ -1,6 +1,7 @@
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 OUTPUT_DIR = ROOT_DIR / "output"
@@ -33,24 +34,40 @@ def continuous_t1_decay_plot(T1, t):
 
     print(f"Saved figure to: {output_path}")
 
-def t1_multi_plot(T1_list, t):
+def t1_multi_plot(T1_dict, t):
     '''
-        Continuous visualization of the T1 (s) decays for a list of multiple tissues over
+        Continuous visualization of the T1 (s) decays for a dictionary of multiple tissues over
          time t (s) (90 degree pulse)
     '''
     t = np.linspace(0.0,float(t), 201)
     M0 = 1.0 # Just normalize the magnetization vector for demonstration
     
-    Mz_list = []
+    Mz_dict = {}
 
-    for T1_value in T1_list:
+    for tissue_name, T1_value in T1_dict.items():
         Mz_t = M0 * (1.0 - np.exp(-t/T1_value)) # 90 degree B1 pulse decay
-        Mz_list.append(Mz_t)
+        Mz_dict[tissue_name] = Mz_t
 
     fig, ax = plt.subplots()
 
-    for i in range(0,len(Mz_list)):
-        ax.plot(t, Mz_list[i])
+    for tissue_name in Mz_dict:
+        ax.plot(t, Mz_dict[tissue_name], label=tissue_name)
+
+    # Plot annotation
+    ax.set_title(r"Plot of Multiple T1 Decay Values (3T $B_0$ Field)")
+    ax.set_ylabel(r"Magnetization Magnitude $M_0$")
+    ax.set_xlabel(r"Time $t$ (seconds)")
+    #ax.tick_params(axis='y', labelleft=False)
+    ax.legend() # Display the labels
+
+    # Keep only the label at Mz = 1
+    def format_func(val, pos):
+        if np.isclose(val, 1, atol=1e-2):
+            return r"$M_0$"
+        return ""
+
+
+    ax.yaxis.set_major_formatter(ticker.FuncFormatter(format_func))
 
     output_path = OUTPUT_DIR / "t1_multi_relaxation.png"
     fig.savefig(output_path, dpi=300, bbox_inches="tight")
